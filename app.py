@@ -298,24 +298,34 @@ def run_download_thread(task_id, url, formato, q_audio, q_video, base_dir, ffmpe
             download_tasks[task_id]['state'] = 'converting'
             download_tasks[task_id]['status_msg'] = "Processando..."
 
-   # OPÇÕES (CONFIGURAÇÃO DO NOME DO ARQUIVO)
+   # OPÇÕES OTIMIZADAS PARA EVITAR BLOQUEIO DE BOT (RENDER/LINUX)
     ydl_opts = {
         'outtmpl': f'{download_folder}/- BAIXADOR - UNIVERSAL - %(title)s.%(ext)s',
+        
         'noplaylist': True,
         'overwrites': True,
+        'restrictfilenames': False,
         
-        # FALSE PARA MANTER ESPAÇOS E ACENTOS NO NOME
-        'restrictfilenames': False, 
-        
-        # --- REMOVA A LINHA 'ffmpeg_location' QUE ESTAVA AQUI ---
-        # O Docker já instalou o FFmpeg no sistema, o yt-dlp vai achar sozinho.
-
-        'progress_hooks': [my_progress_hook],
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        },
+        # --- TRUQUES ANTI-BLOQUEIO ---
         'nocheckcertificate': True,
         'ignoreerrors': True,
+        'quiet': True,
+        'no_warnings': True,
+        
+        # 1. Usar cliente Android (Bloqueio é mais suave)
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'ios'],
+                'player_skip': ['webpage', 'configs', 'js'],
+            }
+        },
+        
+        # 2. User Agent Genérico
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36',
+        },
+
+        'progress_hooks': [my_progress_hook],
     }
 
     # SELEÇÃO DE QUALIDADE
