@@ -298,18 +298,18 @@ def run_download_thread(task_id, url, formato, q_audio, q_video, base_dir, ffmpe
             download_tasks[task_id]['state'] = 'converting'
             download_tasks[task_id]['status_msg'] = "Processando..."
 
-    # OPÇÕES (CONFIGURAÇÃO DO NOME DO ARQUIVO)
+   # OPÇÕES (CONFIGURAÇÃO DO NOME DO ARQUIVO)
     ydl_opts = {
-        # --- AQUI ESTÁ A ALTERAÇÃO ---
         'outtmpl': f'{download_folder}/- BAIXADOR - UNIVERSAL - %(title)s.%(ext)s',
-        
         'noplaylist': True,
         'overwrites': True,
         
         # FALSE PARA MANTER ESPAÇOS E ACENTOS NO NOME
         'restrictfilenames': False, 
         
-        'ffmpeg_location': ffmpeg_path if os.path.exists(os.path.join(ffmpeg_path, 'ffmpeg.exe')) else None,
+        # --- REMOVA A LINHA 'ffmpeg_location' QUE ESTAVA AQUI ---
+        # O Docker já instalou o FFmpeg no sistema, o yt-dlp vai achar sozinho.
+
         'progress_hooks': [my_progress_hook],
         'http_headers': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -413,4 +413,5 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     
     # host='0.0.0.0' é obrigatório para servidores web
+
     app.run(host='0.0.0.0', port=port)
